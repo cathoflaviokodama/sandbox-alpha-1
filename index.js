@@ -14,6 +14,7 @@ var sandbox = {
         log : function() {
             var args = [];
             for(var x = 0; x < arguments.length;x++) args.push(arguments[x]);
+            console.log("-------------------------------------------------------------------------------");
             return console.log.apply(console,args);
         }
     },
