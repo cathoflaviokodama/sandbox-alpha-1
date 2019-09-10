@@ -1,6 +1,7 @@
 const vm = require('vm');
 const readline = require('readline');
 const express = require('express');
+const request = require('request');
 var server = express();
 const rl = readline.createInterface({
     input: process.stdin,
@@ -18,11 +19,28 @@ var sandbox = {
             return console.log.apply(console,args);
         }
     },
+    request : request,
     quit : () => {
+        
         app.shell = false;
     },
-    server : server
+    routes : {
+    }
 };
+server.get("/*",(req,res) => {
+    var parts = req.url.split('?');
+    
+    res.end(req.url);
+});
+app.server = server.listen(9090);
+process.on('SIGTERM', () => {
+    rl.close();
+    app.server.close();
+});
+process.on('SIGINT', () => {
+    rl.close();
+    app.server.close();
+});
 function shell() {
     rl.question('>', (answer) => {
         try {
@@ -34,6 +52,7 @@ function shell() {
         }
         if(app.shell) setTimeout(()=> { shell(); },0);
         else {
+            app.server.close();
             rl.close();
         }
     });
